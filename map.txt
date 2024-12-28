@@ -1,0 +1,30 @@
+crypto-portfolio-tracker/
+├── public/
+│   ├── assets/
+│   │   ├── icon.ico
+│   │   ├── styles.css
+│   │   └── script.js
+├── src/
+│   ├── gui/
+│   │   ├── components/
+│   │   │   ├── addCoinFrame.js
+│   │   │   ├── baseFrame.js
+│   │   │   ├── editCoinFrame.js
+│   │   │   ├── portfolioBriefFrame.js
+│   │   │   └── portfolioFrame.js
+│   │   └── app.js
+│   ├── models/
+│   │   ├── dataModels.js
+│   │   ├── database.js
+│   │   └── portfolio.js
+│   └── utils/
+│       ├── apiClient.js
+│       ├── exceptions.js
+│       ├── guiUtils.js
+│       ├── logger.js
+│       └── privacyManager.js
+├── config/
+│   └── settings.js
+├── index.html
+├── main.js
+└── vercel.json
