@@ -4,27 +4,267 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Portfolio Tracker</title>
-    <link rel="stylesheet" href="/assets/styles.css">
-    <link rel="icon" href="/assets/icon.ico">
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        #app {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 {
+            color: #007bff;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="password"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal-content button {
+            margin: 5px;
+        }
+
+        /* Error and Confirmation Styles */
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .confirmation {
+            color: green;
+            font-weight: bold;
+        }
+
+        /* Privacy Mode Toggle */
+        #privacy_toggle {
+            margin-bottom: 20px;
+        }
+
+        /* Credits Section */
+        .credits {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .credits a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .credits a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
         <!-- App content will be dynamically inserted here -->
     </div>
     <script type="module">
-        import { App } from './src/gui/app.js';
+        // Mock Portfolio class for demonstration
+        class Portfolio {
+            constructor() {
+                this.coins = {};
+            }
+
+            addCoin(name, coinId, avgPrice, amount, targets = []) {
+                const id = Object.keys(this.coins).length + 1;
+                this.coins[id] = { name, coinId, avgPrice, amount, targets };
+                console.log(`Coin added: ${name}`);
+            }
+
+            removeCoin(dbId) {
+                delete this.coins[dbId];
+                console.log(`Coin removed: ${dbId}`);
+            }
+
+            getCoin(dbId) {
+                return this.coins[dbId];
+            }
+
+            getPortfolioData() {
+                return Object.values(this.coins);
+            }
+        }
+
+        // App class
+        class App {
+            constructor() {
+                this.portfolio = new Portfolio();
+                this.initializeUI();
+            }
+
+            initializeUI() {
+                const appContainer = document.getElementById('app');
+                appContainer.innerHTML = `
+                    <h1>Crypto Portfolio Tracker</h1>
+                    <div>
+                        <h2>Add New Coin</h2>
+                        <form id="addCoinForm">
+                            <label for="coinName">Coin Name:</label>
+                            <input type="text" id="coinName" required>
+                            <label for="coinId">CoinMarketCap ID:</label>
+                            <input type="text" id="coinId" required>
+                            <label for="avgPrice">Average Buy Price ($):</label>
+                            <input type="number" id="avgPrice" step="0.00000001" required>
+                            <label for="amount">Amount:</label>
+                            <input type="number" id="amount" step="0.00000001" required>
+                            <label for="targets">Target Prices ($):</label>
+                            <input type="text" id="targets">
+                            <button type="submit">Add Coin</button>
+                        </form>
+                    </div>
+                    <div>
+                        <h2>Portfolio</h2>
+                        <table id="portfolioTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>CoinMarketCap ID</th>
+                                    <th>Avg Price</th>
+                                    <th>Amount</th>
+                                    <th>Targets</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Portfolio data will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="credits">
+                        <p>Built by: <a href="https://github.com/bhikandeshmukh" target="_blank">Bhikan Deshmukh</a></p>
+                        <p>Repository: <a href="https://github.com/bhikandeshmukh/crypto-portfolio-tracker" target="_blank">crypto-portfolio-tracker</a></p>
+                        <p>Version: 1.0.2</p>
+                    </div>
+                `;
+
+                // Add event listener for the form
+                document.getElementById('addCoinForm').addEventListener('submit', (e) => this.addCoin(e));
+                this.updatePortfolioView();
+            }
+
+            addCoin(event) {
+                event.preventDefault();
+                const name = document.getElementById('coinName').value;
+                const coinId = document.getElementById('coinId').value;
+                const avgPrice = parseFloat(document.getElementById('avgPrice').value);
+                const amount = parseFloat(document.getElementById('amount').value);
+                const targets = document.getElementById('targets').value.split(',').map(parseFloat);
+
+                this.portfolio.addCoin(name, coinId, avgPrice, amount, targets);
+                this.updatePortfolioView();
+            }
+
+            updatePortfolioView() {
+                const portfolioData = this.portfolio.getPortfolioData();
+                const tableBody = document.querySelector('#portfolioTable tbody');
+                tableBody.innerHTML = portfolioData.map(coin => `
+                    <tr>
+                        <td>${coin.name}</td>
+                        <td>${coin.coinId}</td>
+                        <td>${coin.avgPrice}</td>
+                        <td>${coin.amount}</td>
+                        <td>${coin.targets.join(', ')}</td>
+                        <td>
+                            <button onclick="editCoin('${coin.coinId}')">Edit</button>
+                            <button onclick="deleteCoin('${coin.coinId}', '${coin.name}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
 
         // Initialize and run the app
         const app = new App();
-        app.run();
 
         // Global functions for portfolio frame
         window.editCoin = (dbId) => {
-            app.portfolioFrame.editCoin(dbId);
+            alert(`Edit coin with ID: ${dbId}`);
         };
 
         window.deleteCoin = (dbId, coinName) => {
-            app.portfolioFrame.deleteCoin(dbId, coinName);
+            if (confirm(`Are you sure you want to delete ${coinName}?`)) {
+                app.portfolio.removeCoin(dbId);
+                app.updatePortfolioView();
+            }
         };
     </script>
 </body>
