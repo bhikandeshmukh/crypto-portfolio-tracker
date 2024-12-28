@@ -8,7 +8,24 @@
     <link rel="icon" href="/assets/icon.ico">
 </head>
 <body>
-    <div id="app"></div>
-    <script type="module" src="/assets/script.js"></script>
+    <div id="app">
+        <!-- App content will be dynamically inserted here -->
+    </div>
+    <script type="module">
+        import { App } from './src/gui/app.js';
+
+        // Initialize and run the app
+        const app = new App();
+        app.run();
+
+        // Global functions for portfolio frame
+        window.editCoin = (dbId) => {
+            app.portfolioFrame.editCoin(dbId);
+        };
+
+        window.deleteCoin = (dbId, coinName) => {
+            app.portfolioFrame.deleteCoin(dbId, coinName);
+        };
+    </script>
 </body>
 </html>
